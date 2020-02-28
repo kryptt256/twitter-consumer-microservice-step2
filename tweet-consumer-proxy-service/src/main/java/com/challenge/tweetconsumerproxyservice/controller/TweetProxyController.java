@@ -3,9 +3,6 @@
  */
 package com.challenge.tweetconsumerproxyservice.controller;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.challenge.tweetconsumerproxyservice.AuthenticationFilter;
+import com.challenge.tweetconsumerproxyservice.AuthenticationService;
 import com.challenge.tweetconsumerproxyservice.domain.LoginUser;
 import com.challenge.tweetconsumerproxyservice.domain.TweetData;
 
@@ -31,13 +28,10 @@ import reactor.core.publisher.Flux;
 public class TweetProxyController implements TweetProxy {
 
 	@Autowired
-	AuthenticationFilter authFilter;
+	private AuthenticationService authService;
 	
 	@Autowired
 	private WebClient.Builder webClientBuilder;
-
-	@Autowired
-	private List<LoginUser> validUsers;
 	
 	/**
 	 * Web metodo con la finalidad de authenticar el usuario y generar un token.
@@ -49,20 +43,7 @@ public class TweetProxyController implements TweetProxy {
 	@Override
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public String authenticate(@RequestBody LoginUser user) throws IllegalAccessException {
-		String token = authFilter.getToken(user);
-		
-		if (token != null) {
-			return token;
-		} else {
-			if (validUsers.stream().anyMatch(u -> u.getUserName().equals(user.getUserName())
-					&& u.getPassword().equals(user.getPassword()))) {
-				token = UUID.randomUUID().toString();
-				authFilter.addToken(user, token);
-			} else {
-				throw new IllegalAccessException("Error: Usuario o password incorrecto!");
-			}
-		}
-		
+		String token = authService.authenticate(user);
 		return "{\"token\":\"" + token + "\"}";
 	}
 	

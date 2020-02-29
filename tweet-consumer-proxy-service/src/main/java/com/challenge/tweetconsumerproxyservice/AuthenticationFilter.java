@@ -14,6 +14,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,8 @@ import com.challenge.tweetconsumerproxyservice.domain.LoginUser;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AuthenticationFilter implements Filter {
 
+	@Value("${proxy.filter.checkauth}")
+	private boolean checkAuth;
 	private Map<LoginUser, String> activeTokens = new HashMap<>();
 
 	public AuthenticationFilter() {
@@ -40,7 +43,7 @@ public class AuthenticationFilter implements Filter {
 		
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		
+
 		if (httpRequest.getServletPath().endsWith("authenticate") ) {
 			chain.doFilter(req, res);
 			return;
@@ -48,7 +51,7 @@ public class AuthenticationFilter implements Filter {
 		
 		String oAuth = httpRequest.getHeader("oAuth");
 		
-		if (!activeTokens.containsValue(oAuth)) {
+		if (checkAuth && !activeTokens.containsValue(oAuth)) {
 			throw new ServletException("Error: Token invalido");
 		}
 

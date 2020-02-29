@@ -1,12 +1,5 @@
 package com.challenge.tweetconsumerproxyservice.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import com.challenge.tweetconsumerproxyservice.domain.LoginUser;
 import com.challenge.tweetconsumerproxyservice.domain.TweetData;
 
@@ -27,9 +20,9 @@ public interface TweetProxy {
 
 	Flux<TweetData> getTweets();
 
-	Flux<TweetData> getTweetById(long tweetId);
+	TweetData getTweetById(long tweetId);
 
-	Flux<TweetData> setValid(long tweetId);
+	TweetData setValid(long tweetId);
 
 	Flux<TweetData> getValidatedTweetsByUserId(long userId);
 

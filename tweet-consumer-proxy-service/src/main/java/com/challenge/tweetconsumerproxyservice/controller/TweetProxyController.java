@@ -68,20 +68,21 @@ public class TweetProxyController implements TweetProxy {
 	
 	@Override
 	@GetMapping("/tweet/{tweetId}")
-	public Flux<TweetData> getTweetById(@PathVariable("tweetId") long tweetId) {
-		return webClientBuilder.build()
+	public TweetData getTweetById(@PathVariable("tweetId") long tweetId) {
+		return (TweetData)webClientBuilder.build()
 				.get().uri("http://localhost:8081/twitterconsumer/tweet/" + tweetId)
 				.retrieve()
-				.bodyToFlux(TweetData.class);
+				.bodyToMono(TweetData.class)
+				.block();
 	}
 	
 	@Override
 	@PatchMapping("/tweet/{tweetId}")
-	public Flux<TweetData> setValid(@PathVariable("tweetId") long tweetId) {
-		return webClientBuilder.build()
+	public TweetData setValid(@PathVariable("tweetId") long tweetId) {
+		return (TweetData)webClientBuilder.build()
 				.put().uri("http://localhost:8081/twitterconsumer/tweet/" + tweetId)
 				.retrieve()
-				.bodyToFlux(TweetData.class);
+				.bodyToMono(TweetData.class).block();
 	}
 	
 	@Override

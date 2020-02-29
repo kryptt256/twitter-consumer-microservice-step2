@@ -64,7 +64,7 @@ public class TwitterProxyServiceImpl implements TwitterProxyService {
 
 	@Override
 	public TweetDTO setValid(long tweetId) {
-		return (TweetDTO)webClientBuilder.build()
+		return webClientBuilder.build()
 				.patch().uri( getUrl("/tweet/", tweetId) )
 				.retrieve()
 				.bodyToFlux(TweetDTO.class).blockFirst();

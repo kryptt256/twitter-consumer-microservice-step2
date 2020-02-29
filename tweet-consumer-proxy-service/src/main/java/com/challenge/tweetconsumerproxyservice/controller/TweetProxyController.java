@@ -79,7 +79,7 @@ public class TweetProxyController implements TweetProxy {
 	@PatchMapping("/tweet/{tweetId}")
 	public TweetData setValid(@PathVariable("tweetId") long tweetId) {
 		return (TweetData)webClientBuilder.build()
-				.put().uri("http://localhost:8081/twitterconsumer/tweet/" + tweetId)
+				.patch().uri("http://localhost:8081/twitterconsumer/tweet/" + tweetId)
 				.retrieve()
 				.bodyToFlux(TweetData.class).blockFirst();
 	}

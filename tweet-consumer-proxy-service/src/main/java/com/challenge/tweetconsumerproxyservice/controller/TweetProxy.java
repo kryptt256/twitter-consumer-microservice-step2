@@ -26,6 +26,6 @@ public interface TweetProxy {
 
 	Flux<TweetData> getValidatedTweetsByUserId(long userId);
 
-	Flux<TweetData> getTopHashtags();
+	Flux<String> getTopHashtags();
 
 }

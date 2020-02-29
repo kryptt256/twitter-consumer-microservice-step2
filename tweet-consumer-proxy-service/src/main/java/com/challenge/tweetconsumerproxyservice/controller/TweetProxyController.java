@@ -4,6 +4,7 @@
 package com.challenge.tweetconsumerproxyservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,9 @@ import reactor.core.publisher.Flux;
 @RequestMapping("/twitter")
 public class TweetProxyController implements TweetProxy {
 
+	@Value("${consumer.service.base-url}")
+	private String consumerServiceBaseUrl;
+	
 	@Autowired
 	private AuthenticationService authService;
 	
@@ -52,7 +56,7 @@ public class TweetProxyController implements TweetProxy {
 	public String receiveTweet(@RequestBody String StatusRequest) {
 		
 		return webClientBuilder.build()
-		.post().uri("http://localhost:8081/twitterconsumer/tweet")
+		.post().uri(consumerServiceBaseUrl + "/tweet")
 		.bodyValue(StatusRequest)
 		.retrieve().bodyToMono(String.class).block();
 	}
@@ -61,7 +65,7 @@ public class TweetProxyController implements TweetProxy {
 	@GetMapping("/tweet")
 	public Flux<TweetData> getTweets() {
 		return webClientBuilder.build()
-				.get().uri("http://localhost:8081/twitterconsumer/tweet")
+				.get().uri(consumerServiceBaseUrl + "/tweet")
 				.retrieve()
 				.bodyToFlux(TweetData.class);
 	}
@@ -70,7 +74,7 @@ public class TweetProxyController implements TweetProxy {
 	@GetMapping("/tweet/{tweetId}")
 	public TweetData getTweetById(@PathVariable("tweetId") long tweetId) {
 		return webClientBuilder.build()
-				.get().uri("http://localhost:8081/twitterconsumer/tweet/" + tweetId)
+				.get().uri( getUrl("/tweet/", tweetId) )
 				.retrieve()
 				.bodyToFlux(TweetData.class).blockFirst();
 	}
@@ -79,7 +83,7 @@ public class TweetProxyController implements TweetProxy {
 	@PatchMapping("/tweet/{tweetId}")
 	public TweetData setValid(@PathVariable("tweetId") long tweetId) {
 		return (TweetData)webClientBuilder.build()
-				.patch().uri("http://localhost:8081/twitterconsumer/tweet/" + tweetId)
+				.patch().uri( getUrl("/tweet/", tweetId) )
 				.retrieve()
 				.bodyToFlux(TweetData.class).blockFirst();
 	}
@@ -88,18 +92,22 @@ public class TweetProxyController implements TweetProxy {
 	@GetMapping("/tweets/{userId}")
 	public Flux<TweetData> getValidatedTweetsByUserId(@PathVariable("userId") long userId) {
 		return webClientBuilder.build()
-				.get().uri("http://localhost:8081/twitterconsumer/tweet/" + userId)
+				.get().uri( getUrl("/tweets/", userId) )
 				.retrieve()
 				.bodyToFlux(TweetData.class);
 	}
 	
 	@Override
 	@GetMapping("/tweet/topmost")
-	public Flux<TweetData> getTopHashtags() {
+	public Flux<String> getTopHashtags() {
 		return webClientBuilder.build()
-				.get().uri("http://localhost:8081/twitterconsumer/tweet")
+				.get().uri(consumerServiceBaseUrl + "/tweet/topmost")
 				.retrieve()
-				.bodyToFlux(TweetData.class);
+				.bodyToFlux(String.class);
+	}
+	
+	private String getUrl(String path, long value) {
+		return consumerServiceBaseUrl + path + value;
 	}
 	
 }

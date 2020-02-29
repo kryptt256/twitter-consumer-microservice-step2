@@ -69,11 +69,10 @@ public class TweetProxyController implements TweetProxy {
 	@Override
 	@GetMapping("/tweet/{tweetId}")
 	public TweetData getTweetById(@PathVariable("tweetId") long tweetId) {
-		return (TweetData)webClientBuilder.build()
+		return webClientBuilder.build()
 				.get().uri("http://localhost:8081/twitterconsumer/tweet/" + tweetId)
 				.retrieve()
-				.bodyToMono(TweetData.class)
-				.block();
+				.bodyToFlux(TweetData.class).blockFirst();
 	}
 	
 	@Override
@@ -82,7 +81,7 @@ public class TweetProxyController implements TweetProxy {
 		return (TweetData)webClientBuilder.build()
 				.put().uri("http://localhost:8081/twitterconsumer/tweet/" + tweetId)
 				.retrieve()
-				.bodyToMono(TweetData.class).block();
+				.bodyToFlux(TweetData.class).blockFirst();
 	}
 	
 	@Override

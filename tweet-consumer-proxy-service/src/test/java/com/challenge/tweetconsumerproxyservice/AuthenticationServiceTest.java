@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.challenge.tweetconsumerproxyservice.domain.LoginUser;
+import com.challenge.tweetconsumerproxyservice.service.AuthenticationService;
 
 @SpringBootTest
 class AuthenticationServiceTest {

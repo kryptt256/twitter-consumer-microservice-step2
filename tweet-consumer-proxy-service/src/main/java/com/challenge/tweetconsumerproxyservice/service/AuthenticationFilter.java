@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.challenge.tweetconsumerproxyservice;
+package com.challenge.tweetconsumerproxyservice.service;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,6 +14,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -44,7 +45,7 @@ public class AuthenticationFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-		if (httpRequest.getServletPath().endsWith("authenticate") ) {
+		if (StringUtils.isBlank( httpRequest.getServletPath() ) || httpRequest.getServletPath().endsWith("authenticate") ) {
 			chain.doFilter(req, res);
 			return;
 		}

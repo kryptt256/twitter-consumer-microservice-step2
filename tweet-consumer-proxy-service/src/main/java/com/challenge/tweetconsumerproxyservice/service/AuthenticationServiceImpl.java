@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.challenge.tweetconsumerproxyservice;
+package com.challenge.tweetconsumerproxyservice.service;
 
 import java.util.List;
 import java.util.UUID;

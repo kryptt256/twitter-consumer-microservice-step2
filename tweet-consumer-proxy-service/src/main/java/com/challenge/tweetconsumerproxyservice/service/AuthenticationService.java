@@ -1,4 +1,4 @@
-package com.challenge.tweetconsumerproxyservice;
+package com.challenge.tweetconsumerproxyservice.service;
 
 import com.challenge.tweetconsumerproxyservice.domain.LoginUser;
 

@@ -14,7 +14,7 @@ import twitter4j.Status;
  *
  */
 @JsonIgnoreProperties
-public class TweetData implements Serializable {
+public class TweetDTO implements Serializable {
 
 	/**
 	 * 
@@ -26,10 +26,10 @@ public class TweetData implements Serializable {
 	private boolean valid;
 	private String location;
 	
-	public TweetData() {
+	public TweetDTO() {
 	}
 	
-	public TweetData(long id, long userId, String text, boolean valid, String location) {
+	public TweetDTO(long id, long userId, String text, boolean valid, String location) {
 		super();
 		this.id = id;
 		this.userId = userId;
@@ -38,8 +38,8 @@ public class TweetData implements Serializable {
 		this.location = location;
 	}
 
-	public static TweetData mapFromStatus(Status status) {
-		TweetData tweet = new TweetData();
+	public static TweetDTO mapFromStatus(Status status) {
+		TweetDTO tweet = new TweetDTO();
 		tweet.setId(status.getId());
 		tweet.setText(status.getText());
 		tweet.setValid(false);
@@ -108,7 +108,7 @@ public class TweetData implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TweetData other = (TweetData) obj;
+		TweetDTO other = (TweetDTO) obj;
 		if (id != other.id)
 			return false;
 		if (location == null) {

@@ -3,6 +3,8 @@
  */
 package com.challenge.tweetconsumerproxyservice.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.challenge.tweetconsumerproxyservice.domain.GenericResult;
 import com.challenge.tweetconsumerproxyservice.domain.LoginUser;
+import com.challenge.tweetconsumerproxyservice.domain.ResponseResult;
 import com.challenge.tweetconsumerproxyservice.domain.TweetDTO;
+import com.challenge.tweetconsumerproxyservice.enums.ResponseStatus;
 import com.challenge.tweetconsumerproxyservice.service.TwitterProxyService;
-
-import reactor.core.publisher.Flux;
 
 /**
  * @author vvmaster
@@ -38,44 +41,115 @@ public class TweetProxyController implements TweetProxy {
 	 */
 	@Override
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public String authenticate(@RequestBody LoginUser user) throws IllegalAccessException {
-		return proxyService.authenticate(user);
+	public GenericResult authenticate(@RequestBody LoginUser user) throws IllegalAccessException {
+		GenericResult result = new GenericResult();
+		try {
+			String response = proxyService.authenticate(user);
+			result.setResult(Arrays.asList(response));
+			result.setMessage("Autenticado Correctamente");
+		} catch (Exception e) {
+			result.setStatus(ResponseStatus.ERROR);
+			result.setMessage("Error:", e.getMessage());
+		}
+		
+		return result;
 	}
 	
 	@Override
 	@RequestMapping(value="/tweet", method = {RequestMethod.POST, RequestMethod.PUT})
-	public String receiveTweet(@RequestBody String StatusRequest) {
-		return proxyService.receiveTweet(StatusRequest);
+	public ResponseResult receiveTweet(@RequestBody String StatusRequest) {
+		ResponseResult result = new ResponseResult();
+		
+		try {
+			proxyService.receiveTweet(StatusRequest);
+		} catch (Exception e) {
+			result.setStatus(ResponseStatus.ERROR);
+			result.setMessage("Error al tratar de consumir el tweet:", e.getMessage());
+		}
+		
+		return result;
 	}
 	
 	@Override
 	@GetMapping("/tweet")
-	public Flux<TweetDTO> getTweets() {
-		return proxyService.getTweets();
+	public ResponseResult getTweets() {
+		ResponseResult result = new ResponseResult();
+		
+		try {
+			Iterable<TweetDTO> tweets = proxyService.getTweets();
+			result.setResult(tweets);
+		} catch (Exception e) {
+			result.setStatus(ResponseStatus.ERROR);
+			result.setMessage("Error al obtener los tweets: ", e.getMessage());
+		}
+		
+		return result;
 	}
 	
 	@Override
 	@GetMapping("/tweet/{tweetId}")
-	public TweetDTO getTweetById(@PathVariable("tweetId") long tweetId) {
-		return proxyService.getTweetById(tweetId);
+	public ResponseResult getTweetById(@PathVariable("tweetId") long tweetId) {
+		
+		ResponseResult result = new ResponseResult();
+		
+		try {
+			TweetDTO tweet = proxyService.getTweetById(tweetId);
+			result.setResult(Arrays.asList(tweet));
+		} catch (Exception e) {
+			result.setStatus(ResponseStatus.ERROR);
+			result.setMessage("Error: ", e.getMessage());
+		}
+		
+		return result;
 	}
 	
 	@Override
 	@PatchMapping("/tweet/{tweetId}")
-	public TweetDTO setValid(@PathVariable("tweetId") long tweetId) {
-		return proxyService.setValid(tweetId);
+	public ResponseResult setValid(@PathVariable("tweetId") long tweetId) {
+		ResponseResult result = new ResponseResult();
+		
+		try {
+			TweetDTO tweet = proxyService.setValid(tweetId);
+			result.setResult(Arrays.asList(tweet));
+		} catch (Exception e) {
+			result.setStatus(ResponseStatus.ERROR);
+			result.setMessage("Error: ", e.getMessage());
+		}
+		
+		return result;
 	}
 	
 	@Override
 	@GetMapping("/tweets/{userId}")
-	public Flux<TweetDTO> getValidatedTweetsByUserId(@PathVariable("userId") long userId) {
-		return proxyService.getValidatedTweetsByUserId(userId);
+	public ResponseResult getValidatedTweetsByUserId(@PathVariable("userId") long userId) {
+		
+		ResponseResult result = new ResponseResult();
+		
+		try {
+			Iterable<TweetDTO> tweets = proxyService.getValidatedTweetsByUserId(userId);
+			result.setResult(tweets);
+		} catch (Exception e) {
+			result.setStatus(ResponseStatus.ERROR);
+			result.setMessage("Error al buscar los tweets validos: ", e.getMessage());
+		}
+		
+		return result;
 	}
 	
 	@Override
 	@GetMapping("/tweet/topmost")
-	public Flux<String> getTopHashtags() {
-		return proxyService.getTopHashtags();
+	public GenericResult getTopHashtags() {
+		GenericResult result = new GenericResult();
+		
+		try {
+			Iterable<String> tweets = proxyService.getTopHashtags();
+			result.setResult(tweets);
+		} catch (Exception e) {
+			result.setStatus(ResponseStatus.ERROR);
+			result.setMessage("Error al buscar los hashtags mas usados: ", e.getMessage());
+		}
+		
+		return result;
 	}
 	
 }

@@ -1,9 +1,8 @@
 package com.challenge.tweetconsumerproxyservice.controller;
 
+import com.challenge.tweetconsumerproxyservice.domain.GenericResult;
 import com.challenge.tweetconsumerproxyservice.domain.LoginUser;
-import com.challenge.tweetconsumerproxyservice.domain.TweetDTO;
-
-import reactor.core.publisher.Flux;
+import com.challenge.tweetconsumerproxyservice.domain.ResponseResult;
 
 public interface TweetProxy {
 
@@ -14,18 +13,18 @@ public interface TweetProxy {
 	 * @return Retorna un objeto Json con el token asociado al usuario.
 	 * @throws IllegalAccessException
 	 */
-	String authenticate(LoginUser user) throws IllegalAccessException;
+	GenericResult authenticate(LoginUser user) throws IllegalAccessException;
 
-	String receiveTweet(String StatusRequest);
+	ResponseResult receiveTweet(String StatusRequest);
 
-	Flux<TweetDTO> getTweets();
+	ResponseResult getTweets();
 
-	TweetDTO getTweetById(long tweetId);
+	ResponseResult getTweetById(long tweetId);
 
-	TweetDTO setValid(long tweetId);
+	ResponseResult setValid(long tweetId);
 
-	Flux<TweetDTO> getValidatedTweetsByUserId(long userId);
+	ResponseResult getValidatedTweetsByUserId(long userId);
 
-	Flux<String> getTopHashtags();
+	GenericResult getTopHashtags();
 
 }

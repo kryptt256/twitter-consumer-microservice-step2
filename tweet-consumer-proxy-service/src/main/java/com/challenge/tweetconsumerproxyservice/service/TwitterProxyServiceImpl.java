@@ -11,8 +11,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.challenge.tweetconsumerproxyservice.domain.LoginUser;
 import com.challenge.tweetconsumerproxyservice.domain.TweetDTO;
 
-import reactor.core.publisher.Flux;
-
 /**
  * @author vvmaster
  *
@@ -34,8 +32,7 @@ public class TwitterProxyServiceImpl implements TwitterProxyService {
 	
 	@Override
 	public String authenticate(LoginUser user) throws IllegalAccessException {
-		String token = authService.authenticate(user);
-		return "{\"token\":\"" + token + "\"}";
+		return authService.authenticate(user);
 	}
 
 	@Override
@@ -47,11 +44,11 @@ public class TwitterProxyServiceImpl implements TwitterProxyService {
 	}
 
 	@Override
-	public Flux<TweetDTO> getTweets() {
+	public Iterable<TweetDTO> getTweets() {
 		return webClientBuilder.build()
 				.get().uri(consumerServiceBaseUrl + "/tweet")
 				.retrieve()
-				.bodyToFlux(TweetDTO.class);
+				.bodyToFlux(TweetDTO.class).toIterable();
 	}
 
 	@Override
@@ -71,19 +68,19 @@ public class TwitterProxyServiceImpl implements TwitterProxyService {
 	}
 
 	@Override
-	public Flux<TweetDTO> getValidatedTweetsByUserId(long userId) {
+	public Iterable<TweetDTO> getValidatedTweetsByUserId(long userId) {
 		return webClientBuilder.build()
 				.get().uri( getUrl("/tweets/", userId) )
 				.retrieve()
-				.bodyToFlux(TweetDTO.class);
+				.bodyToFlux(TweetDTO.class).toIterable();
 	}
 
 	@Override
-	public Flux<String> getTopHashtags() {
+	public Iterable<String> getTopHashtags() {
 		return webClientBuilder.build()
 				.get().uri(consumerServiceBaseUrl + "/tweet/topmost")
 				.retrieve()
-				.bodyToFlux(String.class);
+				.bodyToFlux(String.class).toIterable();
 	}
 	
 	private String getUrl(String path, long value) {

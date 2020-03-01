@@ -5,6 +5,8 @@ package com.challenge.tweetconsumerproxyservice.controller;
 
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,6 +31,8 @@ import com.challenge.tweetconsumerproxyservice.service.TwitterProxyService;
 @RequestMapping("/twitter")
 public class TweetProxyController implements TweetProxy {
 
+	private static final Logger log = LoggerFactory.getLogger(TweetProxyController.class);
+	
 	@Autowired
 	private TwitterProxyService proxyService;
 	
@@ -48,6 +52,7 @@ public class TweetProxyController implements TweetProxy {
 			result.setResult(Arrays.asList(response));
 			result.setMessage("Autenticado Correctamente");
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			result.setStatus(ResponseStatus.ERROR);
 			result.setMessage("Error:", e.getMessage());
 		}
@@ -63,6 +68,7 @@ public class TweetProxyController implements TweetProxy {
 		try {
 			proxyService.receiveTweet(StatusRequest);
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			result.setStatus(ResponseStatus.ERROR);
 			result.setMessage("Error al tratar de consumir el tweet:", e.getMessage());
 		}
@@ -79,6 +85,7 @@ public class TweetProxyController implements TweetProxy {
 			Iterable<TweetDTO> tweets = proxyService.getTweets();
 			result.setResult(tweets);
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			result.setStatus(ResponseStatus.ERROR);
 			result.setMessage("Error al obtener los tweets: ", e.getMessage());
 		}
@@ -96,6 +103,7 @@ public class TweetProxyController implements TweetProxy {
 			TweetDTO tweet = proxyService.getTweetById(tweetId);
 			result.setResult(Arrays.asList(tweet));
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			result.setStatus(ResponseStatus.ERROR);
 			result.setMessage("Error: ", e.getMessage());
 		}
@@ -112,6 +120,7 @@ public class TweetProxyController implements TweetProxy {
 			TweetDTO tweet = proxyService.setValid(tweetId);
 			result.setResult(Arrays.asList(tweet));
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			result.setStatus(ResponseStatus.ERROR);
 			result.setMessage("Error: ", e.getMessage());
 		}
@@ -129,6 +138,7 @@ public class TweetProxyController implements TweetProxy {
 			Iterable<TweetDTO> tweets = proxyService.getValidatedTweetsByUserId(userId);
 			result.setResult(tweets);
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			result.setStatus(ResponseStatus.ERROR);
 			result.setMessage("Error al buscar los tweets validos: ", e.getMessage());
 		}
@@ -145,6 +155,7 @@ public class TweetProxyController implements TweetProxy {
 			Iterable<String> tweets = proxyService.getTopHashtags();
 			result.setResult(tweets);
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			result.setStatus(ResponseStatus.ERROR);
 			result.setMessage("Error al buscar los hashtags mas usados: ", e.getMessage());
 		}
